@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:sqlite:/Users/a11111/code/StudentManagement/student.db
+    driver-class-name: org.sqlite.JDBC
+    username: 
+    password: 
+  sql:
+    init:
+      mode: always
+      schema-locations: file:../Doc/Student.sql
+      continue-on-error: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: input

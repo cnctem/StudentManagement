@@ -1,0 +1,6 @@
+com/ndky/studentmanagement/entity/Student.class
+com/ndky/studentmanagement/service/StudentService.class
+com/ndky/studentmanagement/controller/StudentController.class
+com/ndky/studentmanagement/StudentManagementApplication.class
+com/ndky/studentmanagement/mapper/StudentMapper.class
+com/ndky/studentmanagement/service/impl/StudentServiceImpl.class
