@@ -1,6 +1,16 @@
 com/ndky/studentmanagement/entity/Student.class
-com/ndky/studentmanagement/service/StudentService.class
+com/ndky/studentmanagement/mapper/ScoreMapper.class
+com/ndky/studentmanagement/entity/Course.class
 com/ndky/studentmanagement/controller/StudentController.class
 com/ndky/studentmanagement/StudentManagementApplication.class
 com/ndky/studentmanagement/mapper/StudentMapper.class
 com/ndky/studentmanagement/service/impl/StudentServiceImpl.class
+com/ndky/studentmanagement/service/ScoreService.class
+com/ndky/studentmanagement/controller/ScoreController.class
+com/ndky/studentmanagement/service/impl/ScoreServiceImpl.class
+com/ndky/studentmanagement/service/StudentService.class
+com/ndky/studentmanagement/controller/CourseController.class
+com/ndky/studentmanagement/entity/Score.class
+com/ndky/studentmanagement/service/CourseService.class
+com/ndky/studentmanagement/mapper/CourseMapper.class
+com/ndky/studentmanagement/service/impl/CourseServiceImpl.class

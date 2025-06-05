@@ -5,8 +5,8 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:/Users/a11111/code/StudentManagement/student.db
     driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:student.db
     username: 
     password: 
   sql:
@@ -17,7 +17,8 @@ spring:
 
 mybatis-plus:
   configuration:
+    map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-      id-type: input
+      id-type: auto

@@ -1,1 +1,15 @@
+com/ndky/service/CourseService.class
+com/ndky/gui/CourseStatisticsPanel.class
 com/ndky/StudentManagementGUI.class
+com/ndky/model/Score.class
+com/ndky/service/ScoreService.class
+com/ndky/gui/StatisticsPanel.class
+com/ndky/gui/StudentPanel.class
+com/ndky/gui/ScorePanel.class
+com/ndky/gui/StudentPanel$1.class
+com/ndky/service/StudentService.class
+com/ndky/model/Student.class
+com/ndky/model/Course.class
+com/ndky/util/HttpUtil.class
+com/ndky/gui/CoursePanel.class
+com/ndky/gui/StudentStatisticsPanel.class
