@@ -50,6 +50,56 @@
                     <classpathScope>compile</classpathScope>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.ndky.gui.StudentManagementGUI</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- JPackage Maven Plugin -->
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <name>StudentManagement</name>
+                    <appVersion>1.0.0</appVersion>
+                    <vendor>NDKY</vendor>
+                    <destination>target/dist</destination>
+                    <runtimeImage>target/jlink-image</runtimeImage>
+                    <mainClass>com.ndky.gui.StudentManagementGUI</mainClass>
+                    <mainJar>${project.artifactId}-${project.version}-jar-with-dependencies.jar</mainJar>
+                    <input>target</input>
+                    <icon>src/main/resources/icon.icns</icon>
+                    <winDirChooser>true</winDirChooser>
+                    <winMenu>true</winMenu>
+                    <winMenuGroup>StudentManagement</winMenuGroup>
+                    <winShortcut>true</winShortcut>
+                    <macPackageName>StudentManagement</macPackageName>
+                    <macPackageIdentifier>com.ndky.studentmanagement</macPackageIdentifier>
+                    <macSign>false</macSign>
+                    <linuxMenuGroup>StudentManagement</linuxMenuGroup>
+                    <linuxShortcut>true</linuxShortcut>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
