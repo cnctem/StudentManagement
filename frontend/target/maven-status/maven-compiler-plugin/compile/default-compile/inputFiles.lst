@@ -8,7 +8,8 @@
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/gui/StudentStatisticsPanel.java
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/model/Course.java
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/model/Score.java
-/Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/StudentManagementGUI.java
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/util/HttpUtil.java
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/gui/CourseStatisticsPanel.java
 /Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/gui/ScorePanel.java
+/Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/gui/StudentManagementGUI.java
+/Users/a11111/code/StudentManagement/frontend/src/main/java/com/ndky/gui/ScoreManagementPanel.java

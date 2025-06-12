@@ -24,6 +24,11 @@
             <artifactId>jfreechart</artifactId>
             <version>1.5.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -41,7 +46,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <mainClass>com.ndky.StudentManagementGUI</mainClass>
+                    <mainClass>com.ndky.gui.StudentManagementGUI</mainClass>
                     <classpathScope>compile</classpathScope>
                 </configuration>
             </plugin>

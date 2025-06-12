@@ -5,16 +5,22 @@ import com.ndky.service.ScoreService;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 public class StudentStatisticsPanel extends JPanel {
-    private JTextField studentSnoField;
-    private JButton queryScoresButton;
-    private JButton calculateAvgButton;
+    private JTextField snoField;
+    private JButton queryButton;
+    private JButton calculateButton;
     private JTextArea resultArea;
     private JPanel chartPanelContainer;
     private ScoreService scoreService;
@@ -28,9 +34,9 @@ public class StudentStatisticsPanel extends JPanel {
     }
 
     private void initializeComponents() {
-        studentSnoField = new JTextField(10);
-        queryScoresButton = new JButton("查询学生所有成绩");
-        calculateAvgButton = new JButton("计算学生平均分");
+        snoField = new JTextField(10);
+        queryButton = new JButton("查询成绩");
+        calculateButton = new JButton("计算平均分");
         resultArea = new JTextArea();
         resultArea.setEditable(false);
         chartPanelContainer = new JPanel(new BorderLayout());
@@ -38,126 +44,147 @@ public class StudentStatisticsPanel extends JPanel {
     }
 
     private void setupLayout() {
-        JPanel controlPanel = new JPanel(new FlowLayout());
+        // 控制面板
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         controlPanel.add(new JLabel("学号:"));
-        controlPanel.add(studentSnoField);
-        controlPanel.add(queryScoresButton);
-        controlPanel.add(calculateAvgButton);
+        controlPanel.add(snoField);
+        controlPanel.add(queryButton);
+        controlPanel.add(calculateButton);
 
-        JPanel resultPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        // 结果面板
         JScrollPane textScrollPane = new JScrollPane(resultArea);
         textScrollPane.setPreferredSize(new Dimension(300, 400));
-        resultPanel.add(chartPanelContainer);
-        resultPanel.add(textScrollPane);
+
+        // 使用GridLayout将图表和文本区域并排显示，图表在左
+        JPanel resultPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        resultPanel.add(chartPanelContainer);  // 先添加图表
+        resultPanel.add(textScrollPane);       // 再添加文本区域
 
         add(controlPanel, BorderLayout.NORTH);
         add(resultPanel, BorderLayout.CENTER);
     }
 
     private void setupListeners() {
-        queryScoresButton.addActionListener(e -> queryStudentScores());
-        calculateAvgButton.addActionListener(e -> calculateStudentAvg());
+        queryButton.addActionListener(e -> queryStudentScores());
+        calculateButton.addActionListener(e -> calculateStudentAvg());
     }
 
     private void queryStudentScores() {
-        String sno = studentSnoField.getText().trim();
-        if (sno.isEmpty()) {
+        String snoStr = snoField.getText().trim();
+        if (snoStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, "请输入学号", "提示", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
         try {
-            List<Score> scores = scoreService.getStudentScores(Integer.parseInt(sno));
-            StringBuilder result = new StringBuilder();
+            int sno = Integer.parseInt(snoStr);
+            List<Score> scores = scoreService.getStudentScores(sno);
             if (scores.isEmpty()) {
-                result.append("未找到学号为 ").append(sno).append(" 的学生成绩。");
-            } else {
-                result.append("学号为 ").append(sno).append(" 的学生成绩：\n");
-                result.append("----------------------------------\n");
-                for (Score score : scores) {
-                    result.append("课程号: ").append(score.getCno())
-                          .append(", 课程名称: ").append(score.getCname())
-                          .append(", 成绩: ").append(score.getGrade())
-                          .append("\n");
-                }
+                resultArea.setText("未找到该学生的成绩记录");
+                chartPanelContainer.removeAll();
+                chartPanelContainer.revalidate();
+                chartPanelContainer.repaint();
+                return;
             }
-            resultArea.setText(result.toString());
+
+            // 显示成绩列表
+            StringBuilder sb = new StringBuilder();
+            sb.append("学号: ").append(sno).append("\n");
+            sb.append("学生姓名: ").append(scores.get(0).getSname()).append("\n");
+            sb.append("----------------------------------\n");
+            sb.append("课程成绩列表:\n");
+            for (Score score : scores) {
+                sb.append(String.format("课程: %s\t成绩: %d\n", score.getCname(), score.getGrade()));
+            }
+            resultArea.setText(sb.toString());
+
+            // 显示成绩分布柱状图
             showStudentScoreChart(scores);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "查询学生成绩失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "学号必须是数字", "错误", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "查询失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void calculateStudentAvg() {
-        String sno = studentSnoField.getText().trim();
-        if (sno.isEmpty()) {
+        String snoStr = snoField.getText().trim();
+        if (snoStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, "请输入学号", "提示", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
         try {
-            List<Score> scores = scoreService.getStudentScores(Integer.parseInt(sno));
+            int sno = Integer.parseInt(snoStr);
+            List<Score> scores = scoreService.getStudentScores(sno);
             if (scores.isEmpty()) {
-                resultArea.setText("未找到学号为 " + sno + " 的学生成绩。");
+                resultArea.setText("未找到该学生的成绩记录");
                 return;
             }
 
-            double totalScore = 0;
-            int courseCount = 0;
-            StringBuilder details = new StringBuilder();
-            details.append("学号为 ").append(sno).append(" 的成绩统计：\n");
-            details.append("----------------------------------\n");
-
+            double sum = 0;
             for (Score score : scores) {
-                totalScore += score.getGrade();
-                courseCount++;
-                details.append("课程: ").append(score.getCname())
-                      .append(", 成绩: ").append(score.getGrade()).append("\n");
+                sum += score.getGrade();
             }
+            double avg = sum / scores.size();
 
-            double average = totalScore / courseCount;
-            details.append("----------------------------------\n");
-            details.append(String.format("平均分: %.2f\n", average));
-            details.append("总课程数: ").append(courseCount);
-
-            resultArea.setText(details.toString());
-            showStudentScoreChart(scores);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "计算平均分失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            StringBuilder sb = new StringBuilder();
+            sb.append("学号: ").append(sno).append("\n\n");
+            sb.append("学生姓名: ").append(scores.get(0).getSname()).append("\n");
+            sb.append("----------------------------------\n");
+            sb.append(String.format("平均分: %.2f\n", avg));
+            sb.append(String.format("总课程数: %d\n", scores.size()));
+            resultArea.setText(sb.toString());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "学号必须是数字", "错误", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "计算失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void showStudentScoreChart(List<Score> scores) {
-        if (scores.isEmpty()) {
-            chartPanelContainer.removeAll();
-            chartPanelContainer.revalidate();
-            chartPanelContainer.repaint();
-            return;
-        }
-
-        DefaultPieDataset dataset = new DefaultPieDataset();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        
+        // 添加每个课程的成绩数据
         for (Score score : scores) {
-            dataset.setValue(score.getCname(), score.getGrade());
+            dataset.addValue(score.getGrade(), "成绩", score.getCname());
         }
 
-        JFreeChart chart = ChartFactory.createPieChart(
-            "学生各科成绩分布",
-            dataset,
-            true,
-            true,
-            false
+        // 创建柱状图
+        JFreeChart chart = ChartFactory.createBarChart(
+            "学生成绩分布",           // 图表标题
+            "课程",                  // 横轴标签
+            "成绩",                  // 纵轴标签
+            dataset,                // 数据集
+            PlotOrientation.VERTICAL, // 图表方向
+            true,                   // 是否显示图例
+            true,                   // 是否显示工具提示
+            false                   // 是否生成URL
         );
 
-        // 设置图表背景为白色
-        chart.setBackgroundPaint(Color.WHITE);
-        chart.getPlot().setBackgroundPaint(Color.WHITE);
-        chart.getPlot().setOutlinePaint(Color.WHITE);
+        // 设置图表样式
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+        
+        // 设置柱状图样式
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setSeriesPaint(0, new Color(79, 129, 189)); // 设置柱状图颜色
+        
+        // 设置坐标轴
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // 标签旋转45度
+        
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setRange(0, 100); // 设置成绩范围
 
+        // 创建图表面板
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(500, 400));
         chartPanel.setMouseWheelEnabled(true);
-        chartPanel.setBackground(Color.WHITE);
 
+        // 更新图表显示
         chartPanelContainer.removeAll();
         chartPanelContainer.add(chartPanel, BorderLayout.CENTER);
         chartPanelContainer.revalidate();

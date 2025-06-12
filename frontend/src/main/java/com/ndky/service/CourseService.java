@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CourseService {
     public List<Course> getAllCourses() throws Exception {
-        String response = HttpUtil.sendGetRequest("/course/list");
+        String response = HttpUtil.sendGet("/course/list");
         JSONArray jsonArray = new JSONArray(response);
         List<Course> courses = new ArrayList<>();
         
@@ -27,7 +27,7 @@ public class CourseService {
     }
 
     public Course getCourse(int cno) throws Exception {
-        String response = HttpUtil.sendGetRequest("/course/get/" + cno);
+        String response = HttpUtil.sendGet("/course/get/" + cno);
         JSONObject json = new JSONObject(response);
         return new Course(
             json.optInt("cno", 0),
