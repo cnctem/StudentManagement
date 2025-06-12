@@ -129,7 +129,7 @@ public class StudentStatisticsPanel extends JPanel {
             double avg = sum / scores.size();
 
             StringBuilder sb = new StringBuilder();
-            sb.append("学号: ").append(sno).append("\n\n");
+            sb.append("学号: ").append(sno).append("\n");
             sb.append("学生姓名: ").append(scores.get(0).getSname()).append("\n");
             sb.append("----------------------------------\n");
             sb.append(String.format("平均分: %.2f\n", avg));

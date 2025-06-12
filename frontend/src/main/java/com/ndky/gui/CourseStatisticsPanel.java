@@ -107,12 +107,20 @@ public class CourseStatisticsPanel extends JPanel {
             int minScore = Integer.MAX_VALUE;
             StringBuilder details = new StringBuilder();
             details.append("课程号为 ").append(cno).append(" 的成绩统计：\n");
-            
-            double average = totalScore / studentCount;
             details.append("----------------------------------\n");
+
+            for (Score score : scores) {
+                int grade = score.getGrade();
+                totalScore += grade;
+                studentCount++;
+                maxScore = Math.max(maxScore, grade);
+                minScore = Math.min(minScore, grade);
+            }
+
+            double average = studentCount > 0 ? totalScore / studentCount : 0;
             details.append(String.format("平均分: %.2f\n", average));
-            details.append("最高分: ").append(maxScore).append("\n");
-            details.append("最低分: ").append(minScore).append("\n");
+            details.append("最高分: ").append(maxScore == Integer.MIN_VALUE ? "无" : maxScore).append("\n");
+            details.append("最低分: ").append(minScore == Integer.MAX_VALUE ? "无" : minScore).append("\n");
             details.append("总人数: ").append(studentCount);
 
             resultArea.setText(details.toString());
